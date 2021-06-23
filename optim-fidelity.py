@@ -25,6 +25,18 @@ def get_circuit_priors(t, σ=0.5):
     }
 
 
+def get_ideal_circuit_params(t):
+    t1 = libpulse.depth4.t1(t)
+    t2 = libpulse.depth4.t2(t)
+
+    return {
+        "ta": t1,
+        "tb": t2,
+        "tc": t2,
+        "td": t1,
+    }
+
+
 def circuit_ansatz(ta, tb, tc, td):
     """
     returns a general depth 4 decomposed circuit
@@ -40,31 +52,25 @@ def circuit_ansatz(ta, tb, tc, td):
     return ideal_circ
 
 
-def fidelity_for(circuits, results, ideal_circuit) -> float:
-    process_data = qktomo.ProcessTomographyFitter(results, circuits, meas_basis="Pauli", prep_basis="Pauli")
-    choi_fit = process_data.fit(method="cvx", standard_weights=True, psd=True)
-    choi_fit = choi_fit.data
-
-    ideal_op_data = qkqi.Operator(ideal_circuit).data
-
-    fid = qkqi.process_fidelity(channel=qkqi.Choi(choi_fit), target=qkqi.Operator(ideal_op_data))
-    return fid
-
-
-def optimize(theta, result: qk.result.result.Result, circuits: list):
+def optimize(theta, result: qk.result.result.Result, circuits: list, simulate=True):
     print(f"starting optimization for {theta=}")
-    process_data = qktomo.ProcessTomographyFitter(result, circuits, meas_basis="Pauli", prep_basis="Pauli")
-    choi_fit = process_data.fit(method="cvx", standard_weights=True, psd=True)
-    choi_tomo = qkqi.Choi(choi_fit.data)
-    print("precomuted choi matrix from tomography data")
+    if not simulate:
+        process_data = qktomo.ProcessTomographyFitter(result, circuits, meas_basis="Pauli", prep_basis="Pauli")
+        choi_fit = process_data.fit(method="cvx", standard_weights=True, psd=True)
+        choi_tomo = qkqi.Choi(choi_fit.data)
+        print("precomuted choi matrix from tomography data")
+    else:
+        choi_tomo = qkqi.Choi(circuit_ansatz(**get_ideal_circuit_params(theta)))
+        print("precomuted choi matrix from ideal target circuit")
+        
 
     def objective(**params):
         ideal_circuit = circuit_ansatz(**params)
-        ideal_op_data = qkqi.Operator(ideal_circuit).data
+        ideal_op = qkqi.Operator(ideal_circuit)
 
         fid = qkqi.process_fidelity(
             channel=choi_tomo,
-            target=qkqi.Operator(ideal_op_data),
+            target=ideal_op,
             require_cp=False,
             require_tp=False,
         )
@@ -104,7 +110,7 @@ def main(path="./results/ibmq_casablanca/16.June/depth4"):
             results[angle][2],
             uncompress(qpt_experiments[angle])["transpiled_circuits"],
         )
-        with open(path / f"optim-{angle}.json", "w") as f:
+        with open(path / f"optim-sim-{angle}.json", "w") as f:
             json.dump({"all": res, "best": best}, f)
 
 
