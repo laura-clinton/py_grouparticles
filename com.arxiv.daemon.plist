@@ -13,19 +13,20 @@
     <integer>86400</integer>
 
     <key>StandardErrorPath</key>
-    <string>/Users/danial/github/py-grouparticles/stderr.log</string>
+    <string>/home/laura/quantum-cs-ucl/py-grouparticles/stderr.log</string>
 
     <key>StandardOutPath</key>
-    <string>/Users/danial/github/py-grouparticles/stdout.log</string>
+    <string>/home/laura/quantum-cs-ucl/py-grouparticles/stdout.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>
       <key>PATH</key>
-      <string>//anaconda/envs/py35/bin:/usr/local/opt/openssl/bin://anaconda/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/opt/X11/bin:/usr/local/git/bin</string>
+      <string>/usr/bin:/home/laura/.local/bin:/home/laura/bin:/usr/condabin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/var/lib/snapd/snap/bin:/home/laura/ical2org-master/bin:/home/laura/ical2org-master/bin
+      </string>
     </dict>
 
     <key>WorkingDirectory</key>
-    <string>/Users/danial/github/py-grouparticles</string>
+    <string>/home/laura/quantum-cs-ucl/py-grouparticles</string>
 
     <key>ProgramArguments</key>
     <array>
