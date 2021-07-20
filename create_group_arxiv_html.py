@@ -21,8 +21,8 @@ query = 'search_query=%s&start=%i&max_results=%i' % (search_query,
 # Some entry metadata lives in the arXiv namespace.
 # This is a hack to expose both of these namespaces in
 # feedparser v4.1
-feedparser._FeedParserMixin.namespaces['http://a9.com/-/spec/opensearch/1.1/'] = 'opensearch'
-feedparser._FeedParserMixin.namespaces['http://arxiv.org/schemas/atom'] = 'arxiv'
+#feedparser.namespaces.namespaces['http://a9.com/-/spec/opensearch/1.1/'] = 'opensearch'
+#feedparser.namespaces.namespaces['http://arxiv.org/schemas/atom'] = 'arxiv'
 
 ### Load group search queries
 
